@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	    targetNamespace="http://csv.uia/out/xml" 
+	    xmlns:uia="http://csv.uia/out/xml" 
+	    elementFormDefault="qualified">
+
+    <element name="workspace" type="uia:WorkspaceType" nillable="true" />
+
+    <complexType name="WorkspaceType" mixed="false">
+    	<sequence>
+    		<element name="csvSpace" type="uia:CsvSpaceType" />
+    		<element name="scConvSpace" type="uia:SCConvSpaceType" />
+    		<element name="ccConvSpace" type="uia:CCConvSpaceType" />
+    	</sequence>
+    </complexType>
+
+	<!-- CsvSpace -->
+    <complexType name="CsvSpaceType">
+    	<sequence>
+    		<element name="csv" type="uia:CsvType" maxOccurs="unbounded" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+    <complexType name="CsvType">
+    	<sequence>
+    		<element name="plan" type="uia:PlanType" maxOccurs="unbounded" minOccurs="0"></element>
+    	</sequence>
+    	<attribute name="name" type="string" use="required"></attribute>
+    </complexType>
+    <complexType name="PlanType">
+    	<sequence>
+    		<element name="sql" type="string" />
+    		<element name="csvColumns" type="uia:CsvColumnsType" />
+    	</sequence>
+    	<attribute name="name" type="string" use="required"></attribute>
+    </complexType>
+    <complexType name="CsvColumnsType">
+    	<sequence>
+    		<element name="csvColumn" type="uia:CsvColumnType" maxOccurs="unbounded" minOccurs="0" />
+    	</sequence>
+    </complexType>
+    <complexType name="CsvColumnType">
+    	<sequence>
+    		<element name="sqlColumn" type="uia:SqlColumnType" maxOccurs="unbounded" minOccurs="0" />
+    		<element name="argument" type="uia:ParameterType" maxOccurs="unbounded" minOccurs="0" />
+    	</sequence>
+    	<attribute name="name" type="string" use="required"></attribute>
+    	<attribute name="conv" type="string" default="String"></attribute>
+    </complexType>
+    <complexType name="SqlColumnType">
+    	<sequence>
+    		<element name="argument" type="uia:ParameterType" maxOccurs="unbounded" minOccurs="0" />
+    	</sequence>
+    	<attribute name="index" type="int" default="-1"></attribute>
+    	<attribute name="conv" type="string" default="Varchar"></attribute>
+    </complexType>
+
+	<!-- SCConvSpace -->
+    <complexType name="SCConvSpaceType">
+    	<sequence>
+    		<element name="scConv" 
+    				 type="uia:SCConvType" 
+    				 maxOccurs="unbounded" 
+    				 minOccurs="0" />
+    	</sequence>
+    </complexType>
+    <complexType name="SCConvType">
+    	<attribute name="id" type="string" use="required"></attribute>
+    	<attribute name="driver" type="string"></attribute>
+    </complexType>
+
+	<!-- CCConvSpace -->
+    <complexType name="CCConvSpaceType">
+    	<sequence>
+    		<element name="ccConv" 
+    				 type="uia:CCConvType" 
+    				 maxOccurs="unbounded" 
+    				 minOccurs="0" />
+    	</sequence>
+    </complexType>
+    <complexType name="CCConvType">
+    	<attribute name="id" type="string" use="required"></attribute>
+    	<attribute name="driver" type="string"></attribute>
+    </complexType>
+
+    <complexType name="ParameterType">
+    	<simpleContent>
+    		<extension base="string">
+    			<attribute name="name" type="string"></attribute>
+    		</extension>
+    	</simpleContent>
+    </complexType>
+</schema>

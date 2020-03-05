@@ -1,0 +1,30 @@
+<workspace xmlns="http://csv.uia/in/xml">
+	<csvSpace>
+		<csv name="country" firstRow="1" columnCount="56">
+			<plan name="country_code">
+				<sql>INSERT INTO country(id,eng_name,chi_name,phone_code,region) VALUES (?,?,?,?,?)</sql>
+				<filter csvColumnIndex="0" op="neq" />
+				<sqlColumns>
+					<sqlColumn name="id" length="2">
+						<csvColumn index="9" />
+					</sqlColumn> 
+					<sqlColumn name="eng_name" length="100">
+						<csvColumn index="54" />
+					</sqlColumn>
+					<sqlColumn name="chi_name" length="100">
+						<csvColumn index="54" />
+					</sqlColumn>
+					<sqlColumn name="phone_code" length="20">
+						<csvColumn index="1" conv="IntOrString" />
+					</sqlColumn>
+					<sqlColumn name="region" length="50">
+						<csvColumn index="44" />
+					</sqlColumn>
+				</sqlColumns>
+				<post />
+			</plan>
+        </csv>
+	</csvSpace>
+	<scConvSpace />
+	<ccConvSpace />
+</workspace>
