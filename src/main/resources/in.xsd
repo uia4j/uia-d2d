@@ -1,55 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" 
-	    targetNamespace="http://csv.uia/in/xml" 
-	    xmlns:uia="http://csv.uia/in/xml" 
+	    targetNamespace="http://d2d.uia/in/xml" 
+	    xmlns:d2d="http://d2d.uia/in/xml" 
 	    elementFormDefault="qualified">
 
-    <element name="workspace" type="uia:WorkspaceType" nillable="true" />
+    <element name="workspace" type="d2d:WorkspaceType" nillable="true" />
 
     <complexType name="WorkspaceType" mixed="false">
     	<sequence>
-    		<element name="csvSpace" type="uia:CsvSpaceType" />
-    		<element name="scConvSpace" type="uia:SCConvSpaceType" />
-    		<element name="ccConvSpace" type="uia:CCConvSpaceType" />
-    		<element name="constSpace" type="uia:ConstSpaceType" />
+    		<element name="csvSpace" type="d2d:CsvSpaceType" />
+    		<element name="scConvSpace" type="d2d:SCConvSpaceType" />
+    		<element name="ccConvSpace" type="d2d:CCConvSpaceType" />
+    		<element name="constSpace" type="d2d:ConstSpaceType" />
     	</sequence>
     </complexType>
 
 	<!-- CsvSpace -->
     <complexType name="CsvSpaceType">
     	<sequence>
-    		<element name="csv" type="uia:CsvType" maxOccurs="unbounded" minOccurs="0"></element>
+    		<element name="csv" type="d2d:CsvType" maxOccurs="unbounded" minOccurs="0"></element>
     	</sequence>
     </complexType>
     <complexType name="CsvType">
     	<sequence>
-    		<element name="rowKey" type="uia:SqlColumnType" maxOccurs="unbounded" minOccurs="0" ></element>
-    		<element name="const" type="uia:ParameterType" maxOccurs="unbounded" minOccurs="0" />
-    		<element name="plan" type="uia:PlanType" maxOccurs="unbounded" minOccurs="0"></element>
+    		<element name="rowKey" type="d2d:SqlColumnType" maxOccurs="unbounded" minOccurs="0" ></element>
+    		<element name="const" type="d2d:ParameterType" maxOccurs="unbounded" minOccurs="0" />
+    		<element name="plan" type="d2d:PlanType" maxOccurs="unbounded" minOccurs="0"></element>
     	</sequence>
     	<attribute name="name" type="string" use="required"></attribute>
     	<attribute name="firstRow" type="int" default="0"></attribute>
+    	<attribute name="rowCount" type="int" default="0"></attribute>
     	<attribute name="columnCount" type="int" use="required"></attribute>
     </complexType>
     <complexType name="PlanType">
     	<sequence>
     		<element name="sql" type="string" />
-    		<element name="filter" type="uia:FilterType" minOccurs="0" />
-    		<element name="sqlColumns" type="uia:SqlColumnsType" />
-    		<element name="post" type="uia:PostType" />
+    		<element name="filter" type="d2d:FilterType" minOccurs="0" />
+    		<element name="sqlColumns" type="d2d:SqlColumnsType" />
+    		<element name="post" type="d2d:PostType" />
     	</sequence>
     	<attribute name="name" type="string" use="required"></attribute>
     </complexType>
     <complexType name="SqlColumnsType">
     	<sequence>
-    		<element name="sqlColumn" type="uia:SqlColumnType" maxOccurs="unbounded" minOccurs="0">
+    		<element name="sqlColumn" type="d2d:SqlColumnType" maxOccurs="unbounded" minOccurs="0">
     		</element>
     	</sequence>
     </complexType>
     <complexType name="SqlColumnType">
     	<sequence>
-    		<element name="csvColumn" type="uia:CsvColumnType" maxOccurs="unbounded" minOccurs="0" />
-    		<element name="argument" type="uia:ParameterType" maxOccurs="unbounded" minOccurs="0" />
+    		<element name="csvColumn" type="d2d:CsvColumnType" maxOccurs="unbounded" minOccurs="0" />
+    		<element name="argument" type="d2d:ParameterType" maxOccurs="unbounded" minOccurs="0" />
     	</sequence>
     	<attribute name="name" type="string" use="required"></attribute>
     	<attribute name="length" type="int" default="0"></attribute>
@@ -59,29 +60,49 @@
     </complexType>
     <complexType name="CsvColumnType">
     	<sequence>
-    		<element name="argument" type="uia:ParameterType" maxOccurs="unbounded" minOccurs="0" />
+    		<element name="argument" type="d2d:ParameterType" maxOccurs="unbounded" minOccurs="0" />
     	</sequence>
     	<attribute name="index" type="int" default="-1"></attribute>
     	<attribute name="conv" type="string" default="String"></attribute>
     </complexType>
     <complexType name="PostType">
     	<sequence>
-    		<element name="job" type="uia:JobType" maxOccurs="unbounded" minOccurs="0" />
+    		<choice maxOccurs="unbounded">
+	    		<element name="simpleJob" type="d2d:SimpleJobType" />
+	    		<element name="sheetJob" type="d2d:SheetJobType" />
+    		</choice>
     	</sequence>
     </complexType>
-    <complexType name="JobType">
-    	<sequence>
-    		<element name="sql" type="string" />
-    		<element name="parameter" type="uia:ParameterType" maxOccurs="unbounded" minOccurs="0" />
-    	</sequence>
+    <complexType name="JobType" abstract="true">
     	<attribute name="name" type="string" use="required"></attribute>
+    </complexType>
+    <complexType name="SimpleJobType">
+    	<complexContent>
+    		<extension base="d2d:JobType">
+		    	<sequence>
+		    		<element name="sql" type="string" />
+		    		<element name="parameter" type="d2d:ParameterType" maxOccurs="unbounded" minOccurs="0" />
+		    	</sequence>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    <complexType name="SheetJobType">
+    	<complexContent>
+    		<extension base="d2d:JobType">
+		    	<sequence>
+		    		<element name="filePath" type="string" />
+		    		<element name="sheetName" type="string" />
+		    		<element name="csvType" type="string" />
+		    	</sequence>
+    		</extension>
+    	</complexContent>
     </complexType>
 
 	<!-- SCConvSpace -->
     <complexType name="SCConvSpaceType">
     	<sequence>
     		<element name="scConv" 
-    				 type="uia:SCConvType" 
+    				 type="d2d:SCConvType" 
     				 maxOccurs="unbounded" 
     				 minOccurs="0" />
     	</sequence>
@@ -95,7 +116,7 @@
     <complexType name="CCConvSpaceType">
     	<sequence>
     		<element name="ccConv" 
-    				 type="uia:CCConvType" 
+    				 type="d2d:CCConvType" 
     				 maxOccurs="unbounded" 
     				 minOccurs="0" />
     	</sequence>
@@ -108,7 +129,7 @@
 	<!-- ParamSpace -->
     <complexType name="ConstSpaceType">
     	<sequence>
-    		<element name="const" type="uia:ParameterType" maxOccurs="unbounded" minOccurs="0" />
+    		<element name="const" type="d2d:ParameterType" maxOccurs="unbounded" minOccurs="0" />
     	</sequence>
     </complexType>
 

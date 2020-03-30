@@ -1,54 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" 
-	    targetNamespace="http://csv.uia/out/xml" 
-	    xmlns:uia="http://csv.uia/out/xml" 
+	    targetNamespace="http://d2d.uia/out/xml" 
+	    xmlns:d2d="http://d2d.uia/out/xml" 
 	    elementFormDefault="qualified">
 
-    <element name="workspace" type="uia:WorkspaceType" nillable="true" />
+    <element name="workspace" type="d2d:WorkspaceType" nillable="true" />
 
     <complexType name="WorkspaceType" mixed="false">
     	<sequence>
-    		<element name="csvSpace" type="uia:CsvSpaceType" />
-    		<element name="scConvSpace" type="uia:SCConvSpaceType" />
-    		<element name="ccConvSpace" type="uia:CCConvSpaceType" />
+    		<element name="csvSpace" type="d2d:CsvSpaceType" />
+    		<element name="scConvSpace" type="d2d:SCConvSpaceType" />
+    		<element name="ccConvSpace" type="d2d:CCConvSpaceType" />
     	</sequence>
     </complexType>
 
 	<!-- CsvSpace -->
     <complexType name="CsvSpaceType">
     	<sequence>
-    		<element name="csv" type="uia:CsvType" maxOccurs="unbounded" minOccurs="0"></element>
+    		<element name="csv" type="d2d:CsvType" maxOccurs="unbounded" minOccurs="0"></element>
     	</sequence>
     </complexType>
     <complexType name="CsvType">
     	<sequence>
-    		<element name="plan" type="uia:PlanType" maxOccurs="unbounded" minOccurs="0"></element>
+    		<element name="plan" type="d2d:PlanType" maxOccurs="unbounded" minOccurs="0"></element>
     	</sequence>
     	<attribute name="name" type="string" use="required"></attribute>
     </complexType>
     <complexType name="PlanType">
     	<sequence>
     		<element name="sql" type="string" />
-    		<element name="csvColumns" type="uia:CsvColumnsType" />
+    		<element name="csvColumns" type="d2d:CsvColumnsType" />
     	</sequence>
     	<attribute name="name" type="string" use="required"></attribute>
     </complexType>
     <complexType name="CsvColumnsType">
     	<sequence>
-    		<element name="csvColumn" type="uia:CsvColumnType" maxOccurs="unbounded" minOccurs="0" />
+    		<element name="csvColumn" type="d2d:CsvColumnType" maxOccurs="unbounded" minOccurs="0" />
     	</sequence>
     </complexType>
     <complexType name="CsvColumnType">
     	<sequence>
-    		<element name="sqlColumn" type="uia:SqlColumnType" maxOccurs="unbounded" minOccurs="0" />
-    		<element name="argument" type="uia:ParameterType" maxOccurs="unbounded" minOccurs="0" />
+    		<element name="sqlColumn" type="d2d:SqlColumnType" maxOccurs="unbounded" minOccurs="0" />
+    		<element name="argument" type="d2d:ParameterType" maxOccurs="unbounded" minOccurs="0" />
     	</sequence>
     	<attribute name="name" type="string" use="required"></attribute>
     	<attribute name="conv" type="string" default="String"></attribute>
     </complexType>
     <complexType name="SqlColumnType">
     	<sequence>
-    		<element name="argument" type="uia:ParameterType" maxOccurs="unbounded" minOccurs="0" />
+    		<element name="argument" type="d2d:ParameterType" maxOccurs="unbounded" minOccurs="0" />
     	</sequence>
     	<attribute name="index" type="int" default="-1"></attribute>
     	<attribute name="conv" type="string" default="Varchar"></attribute>
@@ -58,7 +58,7 @@
     <complexType name="SCConvSpaceType">
     	<sequence>
     		<element name="scConv" 
-    				 type="uia:SCConvType" 
+    				 type="d2d:SCConvType" 
     				 maxOccurs="unbounded" 
     				 minOccurs="0" />
     	</sequence>
@@ -72,7 +72,7 @@
     <complexType name="CCConvSpaceType">
     	<sequence>
     		<element name="ccConv" 
-    				 type="uia:CCConvType" 
+    				 type="d2d:CCConvType" 
     				 maxOccurs="unbounded" 
     				 minOccurs="0" />
     	</sequence>

@@ -1,4 +1,4 @@
-<workspace xmlns="http://csv.uia/in/xml">
+<workspace xmlns="http://d2d.uia/in/xml">
 	<csvSpace>
 		<csv name="country" firstRow="1" columnCount="56">
 			<plan name="country_code">
@@ -25,6 +25,4 @@
 			</plan>
         </csv>
 	</csvSpace>
-	<scConvSpace />
-	<ccConvSpace />
 </workspace>
