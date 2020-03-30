@@ -41,7 +41,6 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>uia-d2d</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
