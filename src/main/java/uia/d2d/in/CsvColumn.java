@@ -37,7 +37,7 @@ public class CsvColumn {
         return this.args.get(name);
     }
 
-    public Object toObject(String[] csvValues, CsvExecuteContext ctx) throws Exception {
+    public Object toObject(String[] csvValues, CsvExecuteContext ctx) {
         try {
             if (this.columnType.getIndex() >= 0) {
                 return this.conv.toObject(this, csvValues[this.columnType.getIndex()], ctx);
@@ -47,8 +47,10 @@ public class CsvColumn {
             }
         }
         catch (Exception ex) {
-            this.csv.getListener().failed(this, ctx.getRowIndex(), this.columnType.getIndex());
-            throw ex;
+            ctx.setFailed(true);
+            ctx.setMessage(ex.getMessage());
+            this.csv.getListener().cellFailed(this, ctx.getRowIndex(), this.columnType.getIndex());
+            return null;
         }
     }
 

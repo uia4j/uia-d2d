@@ -9,7 +9,7 @@ import uia.d2d.in.conv.SqlColumnConv;
 
 /**
  * Get the value by executing a SQL.<br>
- * 
+ *
  * <pre>{@code
  * <sqlColumn name="user_id" length="50" conv="SQLx">
  *     <csvColumn index="2" />
@@ -17,14 +17,14 @@ import uia.d2d.in.conv.SqlColumnConv;
  * 	   <argument name="sql">SELECT id FROM user WHERE key1=? AND key=?</argument>
  * </sqlColumn>
  * }</pre>
- * 
+ *
  * @author Kyle K. Lin
  *
  */
 public class SQLxConv implements SqlColumnConv {
 
     @Override
-    public Object toObject(SqlColumn column, Object[] values, CsvExecuteContext ctx) throws Exception {
+    public Object toObject(SqlColumn column, Object[] values, CsvExecuteContext ctx) {
         String sql = column.getArgument("sql");
         Object result = null;
         try (PreparedStatement ps = ctx.getConnection().prepareStatement(sql)) {
@@ -39,6 +39,10 @@ public class SQLxConv implements SqlColumnConv {
                     result = null;
                 }
             }
+        }
+        catch (Exception ex) {
+            ctx.setFailed(true);
+            ctx.setMessage(column.getName() + " failed, " + ex.getMessage());
         }
         return result;
     }

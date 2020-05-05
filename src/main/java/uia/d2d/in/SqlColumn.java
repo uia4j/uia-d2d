@@ -32,18 +32,22 @@ public class SqlColumn {
         for (ParameterType arg : columnType.getArgument()) {
             this.args.put(arg.getName(), arg.getValue());
         }
-        if(this.conv == null) {
-        	throw new D2DException(
-        			csv.getName(), 
-        			plan.getName(),
-        			columnType.getName(),
-        			0,
-        			"conv:" + columnType.getConv() + " NOT FOUND");
+        if (this.conv == null) {
+            throw new D2DException(
+                    csv.getName(),
+                    plan.getName(),
+                    columnType.getName(),
+                    0,
+                    "conv:" + columnType.getConv() + " NOT FOUND");
         }
     }
 
     public String getName() {
         return this.columnType.getName();
+    }
+
+    public boolean isPrimaryKey() {
+        return this.columnType.isPk();
     }
 
     public String getArgument(String name) {
@@ -63,18 +67,15 @@ public class SqlColumn {
         this.csvColumns.add(cc);
     }
 
-    public Object toObject(String[] csvValues, CsvExecuteContext ctx) throws Exception {
-        try {
-            Object[] values = new Object[this.csvColumns.size()];
-            for (int i = 0; i < values.length; i++) {
-                values[i] = this.csvColumns.get(i).toObject(csvValues, ctx);
+    public Object toObject(String[] csvValues, CsvExecuteContext ctx) {
+        Object[] values = new Object[this.csvColumns.size()];
+        for (int i = 0; i < values.length; i++) {
+            values[i] = this.csvColumns.get(i).toObject(csvValues, ctx);
+            if (ctx.isFailed()) {
+                return null;
             }
-            return this.conv.toObject(this, values, ctx);
         }
-        catch (Exception ex) {
-            this.csv.getListener().failed(this);
-            throw ex;
-        }
+        return this.conv.toObject(this, values, ctx);
     }
 
     @Override

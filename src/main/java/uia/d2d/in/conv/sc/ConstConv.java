@@ -19,7 +19,7 @@ import uia.d2d.in.conv.SqlColumnConv;
 public class ConstConv implements SqlColumnConv {
 
     @Override
-    public Object toObject(SqlColumn column, Object[] values, CsvExecuteContext ctx) throws Exception {
+    public Object toObject(SqlColumn column, Object[] values, CsvExecuteContext ctx) {
         String key = column.getArgument("name");
         return ctx.getConst(key);
     }

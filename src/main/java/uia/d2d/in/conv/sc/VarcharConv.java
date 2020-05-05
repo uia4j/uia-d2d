@@ -6,9 +6,9 @@ import uia.d2d.in.conv.SqlColumnConv;
 
 /**
  * Link all values.<br>
- * 
+ *
  * ex: [ "A", "1", "z" ] will be "A1z".
- * 
+ *
  * <pre>{@code
  * <sqlColumn name="addr_line1" length="50" conv="VarcharOr">
  *     <csvColumn index="9" />
@@ -16,14 +16,14 @@ import uia.d2d.in.conv.SqlColumnConv;
  * 	   <csvColumn index="11" />
  * </sqlColumn>
  * }</pre>
- * 
+ *
  * @author Kyle K. Lin
  *
  */
 public class VarcharConv implements SqlColumnConv {
 
     @Override
-    public Object toObject(SqlColumn column, Object[] values, CsvExecuteContext ctx) throws Exception {
+    public Object toObject(SqlColumn column, Object[] values, CsvExecuteContext ctx) {
         StringBuilder b = new StringBuilder();
         for (Object v : values) {
             if (v != null) {
@@ -39,18 +39,23 @@ public class VarcharConv implements SqlColumnConv {
                 value = value.substring(0, column.getType().getLength());
             }
             else {
-                throw new Exception(String.format("%s:%s length>%s", column.getName(), value, value.length()));
+                ctx.setFailed(true);
+                ctx.setMessage(String.format("%s:%s length>%s", column.getName(), value, value.length()));
+                return value;
             }
         }
+
         if (value != null && column.getType().isEmpty2Null() && value.isEmpty()) {
             value = null;
         }
         if (!column.getType().isNullable() && value == null) {
-            throw new Exception(column.getName() + ": null");
+            ctx.setFailed(true);
+            ctx.setMessage(String.format("%s can not be null", column.getName()));
+            return value;
         }
 
-        if(value != null && column.getArgument("prefix") != null) {
-    		value = column.getArgument("prefix") + value;
+        if (value != null && column.getArgument("prefix") != null) {
+            value = column.getArgument("prefix") + value;
         }
         return value;
     }

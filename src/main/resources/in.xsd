@@ -35,6 +35,7 @@
     <complexType name="PlanType">
     	<sequence>
     		<element name="sql" type="string" />
+            <element name="check" type="string" />
     		<element name="filter" type="d2d:FilterType" minOccurs="0" />
     		<element name="sqlColumns" type="d2d:SqlColumnsType" />
     		<element name="post" type="d2d:PostType" />
@@ -53,6 +54,7 @@
     		<element name="argument" type="d2d:ParameterType" maxOccurs="unbounded" minOccurs="0" />
     	</sequence>
     	<attribute name="name" type="string" use="required"></attribute>
+        <attribute name="pk" type="boolean" default="false"></attribute>
     	<attribute name="length" type="int" default="0"></attribute>
     	<attribute name="nullable" type="boolean" default="true"></attribute>
     	<attribute name="empty2Null" type="boolean" default="true"></attribute>

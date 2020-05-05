@@ -13,7 +13,6 @@ import uia.d2d.in.xml.CsvType;
 import uia.d2d.in.xml.ParameterType;
 import uia.d2d.in.xml.PlanType;
 import uia.d2d.in.xml.SqlColumnType;
-import uia.dao.Database;
 
 public class Csv {
 
@@ -90,13 +89,11 @@ public class Csv {
         return this.csvConsts.get(name);
     }
 
-    public void run(final Database database, final List<String[]> rows) throws Exception {
-        run(database, rows, new TreeMap<>());
+    public void run(final Connection conn, final List<String[]> rows) throws Exception {
+        run(conn, rows, new TreeMap<>());
     }
 
-    public void run(final Database database, final List<String[]> rows, Map<String, Object> rowKeys) throws D2DException {
-        Connection conn = database.getConnection();
-
+    public void run(final Connection conn, final List<String[]> rows, Map<String, Object> rowKeys) throws D2DException {
         CsvExecuteContext ctx = new CsvExecuteContext(this.globalConsts, this, 1, conn);
         // copy rowKyes into ctx
         for (Map.Entry<String, Object> e : rowKeys.entrySet()) {
@@ -104,45 +101,60 @@ public class Csv {
         }
 
         int rowIndex = 0;
-    	try {
+        try {
             conn.setAutoCommit(false);
             for (String[] row : rows) {
-	            ctx.setAbort(false);
-	            for (Map.Entry<String, SqlColumn> e : this.rowKeys.entrySet()) {
-	                Object value = e.getValue().toObject(row, ctx);
-	                if (value != null) {
-	                    ctx.putRowKey(e.getKey(), value);
-	                }
-	                else {
-	                    ctx.setAbort(true);
-	                    break;
-	                }
-	            }
-	            if (ctx.isAbort()) {
-	                continue;
-	            }
-	
-	            for (CsvPlan plan : this.plans) {
-	                plan.execute(database, row, ctx);
-	            }
-	            rowIndex++;
-	
-	            ctx = ctx.next();
-        	}
-        	conn.commit();
-    	}
-    	catch(D2DException ex1) {
-    		ex1.setRowIndex(rowIndex);
-    		throw ex1;
-    	}
-    	catch(Exception ex2) {
-    		D2DException d2dex = new D2DException(
-    				getName(),
-    				null,
-    				null,
-    				rowIndex,
-    				ex2);
-    		throw d2dex;
-    	}
+                ctx.setFailed(false);
+                for (Map.Entry<String, SqlColumn> e : this.rowKeys.entrySet()) {
+                    Object value = e.getValue().toObject(row, ctx);
+                    if (ctx.isFailed()) {
+                        break;
+                    }
+
+                    if (value != null) {
+                        ctx.putRowKey(e.getKey(), value);
+                    }
+                    else {
+                        ctx.setFailed(true);
+                        ctx.setMessage("rowKey:" + e.getKey() + " can not be null");
+                        break;
+                    }
+                }
+                if (ctx.isFailed()) {
+                    if (this.getListener() != null) {
+                        this.getListener().rowIgnore(
+                                getName(),
+                                null,
+                                rowIndex,
+                                ctx.getMessage());
+                    }
+                    continue;
+                }
+
+                for (CsvPlan plan : this.plans) {
+                    plan.execute(conn, row, ctx);
+                }
+                rowIndex++;
+
+                if (ctx.isFailed()) {
+                    System.out.println(ctx.getMessage());
+                }
+                ctx = ctx.next();
+            }
+            conn.commit();
+        }
+        catch (D2DException ex1) {
+            ex1.setRowIndex(rowIndex);
+            throw ex1;
+        }
+        catch (Exception ex2) {
+            D2DException d2dex = new D2DException(
+                    getName(),
+                    null,
+                    null,
+                    rowIndex,
+                    ex2);
+            throw d2dex;
+        }
     }
 }

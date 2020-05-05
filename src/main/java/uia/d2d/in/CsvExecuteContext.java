@@ -20,7 +20,7 @@ public class CsvExecuteContext {
 
     private final Map<String, Integer> counts;
 
-    private boolean abort;
+    private boolean failed;
 
     private String message;
 
@@ -89,18 +89,12 @@ public class CsvExecuteContext {
         this.rowKeys.put(key, value);
     }
 
-    public boolean isAbort() {
-        return this.abort;
+    public boolean isFailed() {
+        return this.failed;
     }
 
-    public void setAbort(boolean abort) {
-        this.abort = abort;
-    }
-
-    public void raiseAbort(SqlColumn column, String message) {
-        if (this.csv.getListener() != null) {
-            this.csv.getListener().abort(column, message);
-        }
+    public void setFailed(boolean failed) {
+        this.failed = failed;
     }
 
     public String getMessage() {

@@ -5,5 +5,5 @@ import uia.d2d.in.SqlColumn;
 
 public interface SqlColumnConv {
 
-    public Object toObject(SqlColumn column, Object[] values, CsvExecuteContext ctx) throws Exception;
+    public Object toObject(SqlColumn column, Object[] values, CsvExecuteContext ctx);
 }

@@ -8,7 +8,7 @@ import uia.d2d.in.SqlColumn;
 
 /**
  * Get the value by executing a SQL.<br>
- * 
+ *
  * <pre>{@code
  * <sqlColumn name="user_id" length="50" conv="SQL">
  *     <csvColumn index="9" />
@@ -16,14 +16,14 @@ import uia.d2d.in.SqlColumn;
  * 	   <argument name="nullable">true</argument>
  * </sqlColumn>
  * }</pre>
- * 
+ *
  * @author Kyle K. Lin
  *
  */
 public class SQLConv extends VarcharConv {
 
     @Override
-    public Object toObject(SqlColumn column, Object[] values, CsvExecuteContext ctx) throws Exception {
+    public Object toObject(SqlColumn column, Object[] values, CsvExecuteContext ctx) {
         Object result = super.toObject(column, values, ctx);
         String sql = column.getArgument("sql");
         String nullable = column.getArgument("nullable", "false");
@@ -34,13 +34,17 @@ public class SQLConv extends VarcharConv {
                     result = rs.getString(1);
                 }
                 else if (!"true".equalsIgnoreCase(nullable)) {
-                    ctx.setAbort(true);
-                    ctx.raiseAbort(column, String.format("%s no result of '%s'", sql, result));
+                    ctx.setFailed(true);
+                    ctx.setMessage(String.format("%s no result at %s", sql, column.getName()));
                 }
                 else {
                     result = null;
                 }
             }
+        }
+        catch (Exception ex) {
+            ctx.setFailed(true);
+            ctx.setMessage(column.getName() + " failed, " + ex.getMessage());
         }
         return result;
     }

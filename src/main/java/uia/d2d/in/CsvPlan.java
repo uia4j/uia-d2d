@@ -2,6 +2,7 @@ package uia.d2d.in;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -18,7 +19,6 @@ import uia.d2d.in.xml.PlanType;
 import uia.d2d.in.xml.SheetJobType;
 import uia.d2d.in.xml.SimpleJobType;
 import uia.d2d.in.xml.SqlColumnType;
-import uia.dao.Database;
 
 public class CsvPlan {
 
@@ -46,7 +46,7 @@ public class CsvPlan {
         return this.planType.getName();
     }
 
-    public void execute(Database database, String[] oneRow, CsvExecuteContext ctx) throws D2DException {
+    public void execute(Connection conn, String[] oneRow, CsvExecuteContext ctx) throws D2DException {
         FilterType ft = this.planType.getFilter();
         if (ft != null) {
             String check = oneRow[ft.getCsvColumnIndex()];
@@ -61,31 +61,63 @@ public class CsvPlan {
             }
         }
 
-        ctx.setAbort(false);
+        ctx.setFailed(false);
 
+        ArrayList<Object> pks = new ArrayList<>();
         ArrayList<Object> columnValues = new ArrayList<>();
         for (SqlColumn sc : this.sqlColumns) {
-            try {
-                Object value = sc.toObject(oneRow, ctx);
-                ctx.addColumnValue(sc.getName(), value);
-                columnValues.add(value);
+            Object scValue = sc.toObject(oneRow, ctx);
+            if (ctx.isFailed()) {
+                break;
             }
-            catch (Exception ex) {
-                String message = ex.getClass().getName() + ":" + ex.getMessage();
-            	throw new D2DException(
-            			this.csv.getName(),
-            			this.getName(),
-            			sc.getName(),
-            			0,
-            			message);
+
+            ctx.addColumnValue(sc.getName(), scValue);
+            columnValues.add(scValue);
+            if (sc.isPrimaryKey()) {
+                pks.add(scValue);
             }
         }
 
-        if (ctx.isAbort()) {
+        if (ctx.isFailed()) {
+            this.csv.getListener().rowFailed(this.csv.getName(), getName(), ctx.getRowIndex(), ctx.getMessage());
             return;
         }
 
-        Connection conn = database.getConnection();
+        if (this.planType.getCheck() != null && !this.planType.getCheck().trim().isEmpty()) {
+            try (PreparedStatement ps = conn.prepareStatement(this.planType.getCheck())) {
+                int i = 1;
+                for (Object columnValue : pks) {
+                    if (columnValue instanceof Date) {
+                        ps.setObject(i, new Timestamp(((Date) columnValue).getTime()));
+                    }
+                    else {
+                        ps.setObject(i, columnValue);
+                    }
+                    i++;
+                }
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        if (this.csv.getListener() != null) {
+                            this.csv.getListener().rowIgnore(
+                                    this.csv.getName(),
+                                    this.planType.getName(),
+                                    ctx.getRowIndex(),
+                                    "row exists");
+                        }
+                        return;
+                    }
+                }
+            }
+            catch (Exception ex) {
+                throw new D2DException(
+                        this.csv.getName(),
+                        this.getName(),
+                        null,
+                        0,
+                        ex);
+            }
+        }
+
         try (PreparedStatement ps = conn.prepareStatement(this.planType.getSql())) {
             int i = 1;
             for (Object columnValue : columnValues) {
@@ -99,13 +131,13 @@ public class CsvPlan {
             }
             ps.execute();
         }
-        catch(Exception ex) {
-        	throw new D2DException(
-        			this.csv.getName(),
-        			this.getName(),
-        			null,
-        			0,
-        			ex);
+        catch (Exception ex) {
+            throw new D2DException(
+                    this.csv.getName(),
+                    this.getName(),
+                    null,
+                    0,
+                    ex);
         }
 
         if (this.planType.getPost() != null) {
@@ -131,14 +163,14 @@ public class CsvPlan {
                         ps.execute();
                     }
                     catch (SQLException ex2) {
-                    	D2DException d2dex = new D2DException(
-                    			this.csv.getName(),
-                    			this.getName(),
-                    			null,
-                    			0,
-                    			ex2);
-                    	d2dex.setPostName(jobType.getName());
-                    	throw d2dex;
+                        D2DException d2dex = new D2DException(
+                                this.csv.getName(),
+                                this.getName(),
+                                null,
+                                0,
+                                ex2);
+                        d2dex.setPostName(jobType.getName());
+                        throw d2dex;
                     }
                 }
                 else {
@@ -146,31 +178,31 @@ public class CsvPlan {
                     Csv childCsv = this.csv.getSchema().build(sjType.getCsvType());
 
                     try {
-	                    List<String[]> childLines = ExcelFile.read(
-	                            sjType.getFilePath(),
-	                            sjType.getSheetName(),
-	                            childCsv.getFirstRow(),
-	                            childCsv.getRowCount(),
-	                            childCsv.getColumnCount());
-	                    childCsv.run(database, childLines, ctx.getColumnValues());
+                        List<String[]> childLines = ExcelFile.read(
+                                sjType.getFilePath(),
+                                sjType.getSheetName(),
+                                childCsv.getFirstRow(),
+                                childCsv.getRowCount(),
+                                childCsv.getColumnCount());
+                        childCsv.run(conn, childLines, ctx.getColumnValues());
                     }
-                    catch(D2DException ex1) {
-                    	ex1.setPostName(sjType.getName());
-                    	throw ex1;
+                    catch (D2DException ex1) {
+                        ex1.setPostName(sjType.getName());
+                        throw ex1;
                     }
-                    catch(Exception ex2) {
-                    	throw new D2DException(
-                    			this.csv.getName(),
-                    			this.getName(),
-                    			null,
-                    			0,
-                    			ex2);
+                    catch (Exception ex2) {
+                        throw new D2DException(
+                                this.csv.getName(),
+                                this.getName(),
+                                null,
+                                0,
+                                ex2);
                     }
                 }
             }
         }
         if (this.csv.getListener() != null) {
-            this.csv.getListener().done(this.csv.getName(), this.planType.getName(), ctx.getRowIndex());
+            this.csv.getListener().rowDone(this.csv.getName(), this.planType.getName(), ctx.getRowIndex());
         }
     }
 }

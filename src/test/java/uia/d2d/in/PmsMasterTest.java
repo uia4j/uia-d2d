@@ -8,27 +8,27 @@ import uia.d2d.ExcelFile;
 import uia.dao.Database;
 import uia.dao.pg.PostgreSQL;
 
-public class CountryCodesTest {
+public class PmsMasterTest {
 
     private CsvSchema schema;
 
-    public CountryCodesTest() throws Exception {
-        this.schema = new CsvSchema(CountryCodesTest.class.getResourceAsStream("/country_codes.xml"));
+    public PmsMasterTest() throws Exception {
+        this.schema = new CsvSchema(PmsMasterTest.class.getResourceAsStream("/pms_master.xml"));
     }
 
     @Test
     public void test() throws Exception {
         CsvListenerImpl l = new CsvListenerImpl();
-        Csv csv = this.schema.build("country");
+        Csv csv = this.schema.build("STRUCT_CODE");
         csv.setListener(l);
 
         List<String[]> lines = ExcelFile.read(
-                CountryCodesTest.class.getResourceAsStream("/country_codes.xlsx"),
-                0,
+                PmsMasterTest.class.getResourceAsStream("/pms_master.xlsx"),
+                "STRUCT_CODE",
                 csv.getFirstRow(),
                 csv.getRowCount(),
                 csv.getColumnCount());
-        try (Database db = new PostgreSQL("localhost", "5432", "scmdb", "scm", "scmAdmin")) {
+        try (Database db = new PostgreSQL("localhost", "5432", "pmsdb", "pms", "pms")) {
             csv.run(db.getConnection(), lines);
         }
         l.println();

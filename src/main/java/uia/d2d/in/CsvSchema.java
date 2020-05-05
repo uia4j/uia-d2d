@@ -1,7 +1,8 @@
 package uia.d2d.in;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -42,9 +43,10 @@ public class CsvSchema {
     private final TreeMap<String, String> globalConsts;
 
     public CsvSchema(File file) throws Exception {
-        if (!file.exists()) {
-            throw new IOException(file.getName() + " NOT FOUND");
-        }
+        this(new FileInputStream(file));
+    }
+
+    public CsvSchema(InputStream is) throws Exception {
         this.csvs = new TreeMap<>();
         this.scConvs = new TreeMap<>();
         this.ccConvs = new TreeMap<>();
@@ -56,7 +58,7 @@ public class CsvSchema {
                 "http://d2d.uia/in/xml",
                 "uia.d2d.in.xml");
 
-        WorkspaceType wsType = jaxb.fromXml(file);
+        WorkspaceType wsType = jaxb.fromXml(is);
         for (CsvType csv : wsType.getCsvSpace().getCsv()) {
             this.csvs.put(csv.getName(), csv);
         }
@@ -105,11 +107,11 @@ public class CsvSchema {
         CsvType csvType = this.csvs.get(csvName);
         if (csvType == null) {
             throw new D2DException(
-            		csvName,
-            		null, 
-            		null,
-            		0,
-            		"CsvName NOT FOUND(xml)");
+                    csvName,
+                    null,
+                    null,
+                    0,
+                    csvName + " Definition NOT FOUND in XML");
         }
         return new Csv(this, csvType);
     }
@@ -124,5 +126,11 @@ public class CsvSchema {
 
     public Map<String, String> getGlobalConsts() {
         return this.globalConsts;
+    }
+
+    public void println() {
+        for (Map.Entry<String, CsvType> e : this.csvs.entrySet()) {
+            System.out.println(e.getKey());
+        }
     }
 }

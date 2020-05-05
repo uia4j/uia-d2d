@@ -6,11 +6,26 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The CSV file.
+ *
+ * @author Kyle K. Lin
+ *
+ */
 public final class CsvFile {
 
     private CsvFile() {
     }
 
+    /**
+     * Read data.
+     *
+     * @param file The excel file.
+     * @param firstRow The first row.
+     * @param columnCount The column count.
+     * @return Result.
+     * @throws Exception Failed to read.
+     */
     public static List<String[]> read(String file, int firstRow, int columnCount) throws Exception {
         ArrayList<String[]> result = new ArrayList<>();
         try (FileReader fr = new FileReader(new File(file))) {

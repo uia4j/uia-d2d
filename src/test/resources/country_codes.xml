@@ -3,9 +3,10 @@
 		<csv name="country" firstRow="1" columnCount="56">
 			<plan name="country_code">
 				<sql>INSERT INTO country(id,eng_name,chi_name,phone_code,region) VALUES (?,?,?,?,?)</sql>
+                <check>SELECT id FROM country WHERE id=?</check>
 				<filter csvColumnIndex="0" op="neq" />
 				<sqlColumns>
-					<sqlColumn name="id" length="2">
+					<sqlColumn name="id" length="2" pk="true">
 						<csvColumn index="9" />
 					</sqlColumn> 
 					<sqlColumn name="eng_name" length="100">

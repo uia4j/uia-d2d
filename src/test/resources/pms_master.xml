@@ -1,0 +1,307 @@
+<workspace xmlns="http://d2d.uia/in/xml">
+    <constSpace>
+		<const name="sync_user_id">PMS</const>
+		<const name="sync_user_code">PMS</const>
+		<const name="sync_user_name">PMS</const>
+    </constSpace>
+	<csvSpace>
+		<csv name="EQUIP_GROUP" firstRow="1" columnCount="2">
+			<plan name="equip_group">
+				<sql>INSERT INTO equip_group(id,group_name) VALUES (?,?)</sql>
+                <check>SELECT id FROM equip_group WHERE id=?</check>
+				<sqlColumns>
+					<sqlColumn name="id" pk="true">
+						<csvColumn index="0" />
+					</sqlColumn>
+					<sqlColumn name="group_name">
+						<csvColumn index="1" />
+					</sqlColumn>
+				</sqlColumns>
+			</plan>
+        </csv>
+		<csv name="EQUIP" firstRow="1" columnCount="9">
+			<plan name="equip">
+				<sql>INSERT INTO equip(id,equip_group_id,state_name,sub_state_name,updated_time,updater,mes_status,equip_name,equip_description,ma_count) VALUES (?,?,?,?,?,?,?,?,?,0)</sql>
+                <check>SELECT id FROM equip WHERE id=?</check>
+				<sqlColumns>
+					<sqlColumn name="id" pk="true">
+						<csvColumn index="0" />
+					</sqlColumn>
+					<sqlColumn name="equip_group_id" empty2Null="true">
+						<csvColumn index="5" />
+					</sqlColumn>
+					<sqlColumn name="state_name">
+                        <csvColumn index="3" />
+					</sqlColumn>
+					<sqlColumn name="sub_state_name">
+                        <csvColumn index="3" />
+					</sqlColumn>
+					<sqlColumn name="updated_time" conv="Now" />
+					<sqlColumn name="updater" conv="Const">
+						<argument name="name">sync_user_id</argument>
+					</sqlColumn>
+					<sqlColumn name="mes_status">
+                        <csvColumn index="4" />
+					</sqlColumn>
+					<sqlColumn name="equip_name">
+						<csvColumn index="1" />
+					</sqlColumn>
+					<sqlColumn name="equip_description">
+						<csvColumn index="2" />
+					</sqlColumn>
+				</sqlColumns>
+			</plan>
+        </csv>
+		<csv name="PATT_CATEGORY" firstRow="1" columnCount="3">
+			<plan name="part_category">
+				<sql>INSERT INTO part_category(id,category_name,category_description,created_time,creator,updated_time,updater) VALUES (?,?,?,?,?,?,?)</sql>
+                <check>SELECT id FROM part_category WHERE id=?</check>
+				<sqlColumns>
+					<sqlColumn name="id" pk="true">
+						<csvColumn index="0" />
+					</sqlColumn>
+					<sqlColumn name="category_name">
+						<csvColumn index="1" />
+					</sqlColumn>
+					<sqlColumn name="category_description">
+						<csvColumn index="2" />
+					</sqlColumn>
+					<sqlColumn name="created_time" conv="Now" />
+					<sqlColumn name="creator" conv="Const">
+						<argument name="name">sync_user_id</argument>
+					</sqlColumn>
+					<sqlColumn name="updated_time" conv="Now" />
+					<sqlColumn name="updater" conv="Const">
+						<argument name="name">sync_user_id</argument>
+					</sqlColumn>
+				</sqlColumns>
+			</plan>
+        </csv>
+		<csv name="PART" firstRow="1" columnCount="6">
+			<plan name="part">
+				<sql>INSERT INTO part(id,part_name,part_description,part_category_id,state_name,created_time,creator,updated_time,updater,revision,spec_no,qty_unit) VALUES (?,?,?,?,'on',?,?,?,?,1,?,?)</sql>
+                <check>SELECT id FROM part WHERE id=?</check>
+				<sqlColumns>
+					<sqlColumn name="id" pk="true">
+						<csvColumn index="1" />
+					</sqlColumn>
+					<sqlColumn name="part_name">
+						<csvColumn index="2" />
+					</sqlColumn>
+					<sqlColumn name="part_description">
+						<csvColumn index="3" />
+					</sqlColumn>
+					<sqlColumn name="part_category_id">
+						<csvColumn index="0" />
+					</sqlColumn>
+					<sqlColumn name="created_time" conv="Now" />
+					<sqlColumn name="creator" conv="Const">
+						<argument name="name">sync_user_id</argument>
+					</sqlColumn>
+					<sqlColumn name="updated_time" conv="Now" />
+					<sqlColumn name="updater" conv="Const">
+						<argument name="name">sync_user_id</argument>
+					</sqlColumn>
+					<sqlColumn name="spec_no">
+						<csvColumn index="4" />
+					</sqlColumn>
+					<sqlColumn name="qty_unit">
+						<csvColumn index="5" />
+					</sqlColumn>
+				</sqlColumns>
+				<post />
+			</plan>
+        </csv>
+		<csv name="STRUCT_CODE" firstRow="1" columnCount="3">
+			<plan name="struct_code">
+				<sql>INSERT INTO struct_code(id,struct_name,struct_description,created_time,creator,state_name) VALUES (?,?,?,?,?,'on')</sql>
+                <check>SELECT id FROM struct_code WHERE id=?</check>
+				<sqlColumns>
+					<sqlColumn name="id" pk="true">
+						<csvColumn index="0" />
+					</sqlColumn>
+					<sqlColumn name="struct_name">
+						<csvColumn index="1" />
+					</sqlColumn>
+					<sqlColumn name="struct_description">
+						<csvColumn index="2" />
+					</sqlColumn>
+					<sqlColumn name="created_time" conv="Now" />
+					<sqlColumn name="creator" conv="Const">
+						<argument name="name">sync_user_id</argument>
+					</sqlColumn>
+				</sqlColumns>
+			</plan>
+        </csv>
+		<csv name="BROKEN_CODE" firstRow="1" columnCount="3">
+			<plan name="struct_code">
+				<sql>INSERT INTO broken_code(id,broken_name,broken_description,created_time,creator,state_name) VALUES (?,?,?,?,?,'on')</sql>
+                <check>SELECT id FROM broken_code WHERE id=?</check>
+				<sqlColumns>
+					<sqlColumn name="id" pk="true">
+						<csvColumn index="0" />
+					</sqlColumn>
+					<sqlColumn name="broken_name">
+						<csvColumn index="1" />
+					</sqlColumn>
+					<sqlColumn name="broken_description">
+						<csvColumn index="2" />
+					</sqlColumn>
+					<sqlColumn name="created_time" conv="Now" />
+					<sqlColumn name="creator" conv="Const">
+						<argument name="name">sync_user_id</argument>
+					</sqlColumn>
+				</sqlColumns>
+			</plan>
+        </csv>
+		<csv name="WORK_GROUP" firstRow="1" columnCount="3">
+			<plan name="work_gorup">
+				<sql>INSERT INTO work_group(id,group_name,group_description,group_type) VALUES(?,?,?,?)</sql>
+                <check>SELECT id FROM work_group WHERE id=?</check>
+				<sqlColumns>
+					<sqlColumn name="id" pk="true">
+						<csvColumn index="0" />
+					</sqlColumn>
+					<sqlColumn name="group_name">
+						<csvColumn index="2" />
+					</sqlColumn>
+					<sqlColumn name="group_description">
+						<csvColumn index="2" />
+					</sqlColumn>
+					<sqlColumn name="group_type">
+                        <csvColumn index="1" />
+					</sqlColumn>
+				</sqlColumns>
+			</plan>
+        </csv>
+		<csv name="MA_ITEM_GROUP" firstRow="1" columnCount="3">
+			<plan name="ma_item_group">
+				<sql>INSERT INTO ma_item_group(id,group_name,group_description,created_time,creator,updated_time,updater) VALUES (?,?,?,?,?,?,?)</sql>
+                <check>SELECT id FROM ma_item_group WHERE id=?</check>
+				<sqlColumns>
+					<sqlColumn name="id" pk="true">
+						<csvColumn index="0" />
+					</sqlColumn>
+					<sqlColumn name="group_name">
+						<csvColumn index="1" />
+					</sqlColumn>
+					<sqlColumn name="group_description">
+						<csvColumn index="2" />
+					</sqlColumn>
+					<sqlColumn name="created_time" conv="Now" />
+					<sqlColumn name="creator" conv="Const">
+						<argument name="name">sync_user_id</argument>
+					</sqlColumn>
+					<sqlColumn name="updated_time" conv="Now" />
+					<sqlColumn name="updater" conv="Const">
+						<argument name="name">sync_user_id</argument>
+					</sqlColumn>
+				</sqlColumns>
+			</plan>
+        </csv>
+		<csv name="INSP_ITEM_GROUP" firstRow="1" columnCount="3">
+			<plan name="insp_item_group">
+				<sql>INSERT INTO insp_item_group(id,group_name,group_description,created_time,creator,updated_time,updater) VALUES (?,?,?,?,?,?,?)</sql>
+                <check>SELECT id FROM insp_item_group WHERE id=?</check>
+				<sqlColumns>
+					<sqlColumn name="id" pk="true">
+						<csvColumn index="0" />
+					</sqlColumn>
+					<sqlColumn name="group_name">
+						<csvColumn index="1" />
+					</sqlColumn>
+					<sqlColumn name="group_description">
+						<csvColumn index="2" />
+					</sqlColumn>
+					<sqlColumn name="created_time" conv="Now" />
+					<sqlColumn name="creator" conv="Const">
+						<argument name="name">sync_user_id</argument>
+					</sqlColumn>
+					<sqlColumn name="updated_time" conv="Now" />
+					<sqlColumn name="updater" conv="Const">
+						<argument name="name">sync_user_id</argument>
+					</sqlColumn>
+				</sqlColumns>
+			</plan>
+        </csv>
+		<csv name="EQGROUP_STRUCT_CODE" firstRow="1" columnCount="2">
+			<plan name="work_gorup">
+				<sql>INSERT INTO equip_group_struct(id,equip_group_id,struct_code_id,struct_name,state_name,updated_time,updater) VALUES(?,?,?,?,'on',?,?)</sql>
+                <check>SELECT id FROM equip_group_struct WHERE id=?</check>
+				<sqlColumns>
+					<sqlColumn name="id" conv="UUID" pk="true">
+						<argument name="prefix">EGS:</argument>
+					</sqlColumn>
+					<sqlColumn name="equip_group_id">
+						<csvColumn index="0" />
+					</sqlColumn>
+					<sqlColumn name="struct_code_id">
+						<csvColumn index="1" />
+					</sqlColumn>
+					<sqlColumn name="struct_name" conv="SQL">
+						<csvColumn index="1" />
+						<argument name="sql">SELECT struct_name FROM struct_code WHERE id=?</argument>
+					</sqlColumn>
+					<sqlColumn name="updated_time" conv="Now" />
+					<sqlColumn name="updater" conv="Const">
+						<argument name="name">sync_user_id</argument>
+					</sqlColumn>
+				</sqlColumns>
+			</plan>
+        </csv>
+		<csv name="EQGROUP_BROKEN_CODE" firstRow="1" columnCount="5">
+			<plan name="equip_group_struct_broken">
+				<sql>INSERT INTO equip_group_struct_broken(equip_group_struct_id,broken_code_id,broken_name,state_name,updated_time,updater) VALUES(?,?,?,'on',?,?)</sql>
+                <check>SELECT equip_group_struct_id,broken_code_id FROM equip_group_struct_broken WHERE equip_group_struct_id=? AND broken_code_id=?</check>
+				<sqlColumns>
+					<sqlColumn name="equip_group_struct_id" pk="true" conv="SQLx">
+						<csvColumn index="0" />
+						<csvColumn index="2" />
+						<argument name="sql">SELECT id FROM equip_group_struct WHERE equip_group_id=? AND struct_code_id=?</argument>
+					</sqlColumn>
+					<sqlColumn name="broken_code_id" pk="true">
+						<csvColumn index="1" />
+					</sqlColumn>
+					<sqlColumn name="broken_name" conv="SQLx">
+						<csvColumn index="1" />
+						<argument name="sql">SELECT broken_name FROM broken_code WHERE id=?</argument>
+					</sqlColumn>
+					<sqlColumn name="updated_time" conv="Now" />
+					<sqlColumn name="updater" conv="Const">
+						<argument name="name">sync_user_id</argument>
+					</sqlColumn>
+				</sqlColumns>
+			</plan>
+        </csv>
+		<csv name="EQGROUP_MA_ITEM" firstRow="1" columnCount="5">
+			<plan name="ma_item">
+				<sql>INSERT INTO ma_item(id,item_name,item_description,ma_item_group_id,created_time,creator,updated_time,updater,equip_group_struct_id,seq_no) VALUES(?,?,?,null,?,?,?,?,?,10)</sql>
+                <check>SELECT id FROM ma_item WHERE id=?</check>
+				<sqlColumns>
+					<sqlColumn name="id" pk="true">
+						<csvColumn index="1" />
+					</sqlColumn>
+					<sqlColumn name="item_name">
+						<csvColumn index="2" />
+					</sqlColumn>
+					<sqlColumn name="item_description">
+						<csvColumn index="3" />
+					</sqlColumn>
+					<sqlColumn name="created_time" conv="Now" />
+					<sqlColumn name="creator" conv="Const">
+						<argument name="name">sync_user_id</argument>
+					</sqlColumn>
+					<sqlColumn name="updated_time" conv="Now" />
+					<sqlColumn name="updater" conv="Const">
+						<argument name="name">sync_user_id</argument>
+					</sqlColumn>
+					<sqlColumn name="equip_group_struct_id" conv="SQLx">
+						<csvColumn index="0" />
+						<csvColumn index="4" />
+						<argument name="sql">SELECT id FROM equip_group_struct WHERE equip_group_id=? AND struct_code_id=?</argument>
+					</sqlColumn>
+				</sqlColumns>
+			</plan>
+        </csv>
+	</csvSpace>
+</workspace>

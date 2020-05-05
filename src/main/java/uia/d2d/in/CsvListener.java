@@ -2,11 +2,11 @@ package uia.d2d.in;
 
 public interface CsvListener {
 
-    public void done(String csvName, String plan, int index);
+    public void cellFailed(CsvColumn column, int rowIndex, int columnIndex);
 
-    public void abort(SqlColumn column, String message);
+    public void rowIgnore(String csvName, String plan, int rowIndex, String message);
 
-    public void failed(SqlColumn column);
+    public void rowFailed(String csvName, String plan, int rowIndex, String message);
 
-    public void failed(CsvColumn column, int rowIndex, int columnIndex);
+    public void rowDone(String csvName, String plan, int rowIndex);
 }
