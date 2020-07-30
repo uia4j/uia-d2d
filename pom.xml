@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.uia.solution</groupId>
 	<artifactId>uia-d2d</artifactId>
-	<version>0.1.1</version>
+	<version>0.1.2</version>
 	<packaging>jar</packaging>
 	<name>uia-d2d</name>
 	<url>http://maven.apache.org</url>
@@ -39,7 +39,7 @@
 		<dependency>
 		    <groupId>org.apache.poi</groupId>
 		    <artifactId>poi-ooxml</artifactId>
-		    <version>4.1.2</version>
+		    <version>3.17</version>
 		</dependency>
 	</dependencies>
 	<build>

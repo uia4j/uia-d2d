@@ -1,0 +1,83 @@
+<workspace xmlns="http://d2d.uia/in/xml">
+	<csvSpace>
+		<csv name="country" firstRow="1" columnCount="56">
+			<plan name="country_code">
+				<sql>INSERT INTO country(id,eng_name,chi_name,phone_code,region) VALUES (?,?,?,?,?)</sql>
+                <check>SELECT id FROM country WHERE id=?</check>
+				<filter csvColumnIndex="0" op="neq" />
+				<sqlColumns>
+					<sqlColumn name="id" length="2" pk="true">
+						<csvColumn index="9" />
+					</sqlColumn> 
+					<sqlColumn name="eng_name" length="100">
+						<csvColumn index="54" />
+					</sqlColumn>
+					<sqlColumn name="chi_name" length="100">
+						<csvColumn index="54" />
+					</sqlColumn>
+					<sqlColumn name="phone_code" length="20">
+						<csvColumn index="1" conv="IntOrString" />
+					</sqlColumn>
+					<sqlColumn name="region" length="50">
+						<csvColumn index="44" />
+					</sqlColumn>
+				</sqlColumns>
+				<post />
+			</plan>
+        </csv>
+		<csv name="part_spec" firstRow="1" columnCount="10">
+			<plan name="part_spec">
+				<sql>INSERT INTO po.part_spec(id,part_code,uom,gmp,virtual_part,state_name,part_name) VALUES (?,?,?,'n','n','on',?)</sql>
+				<sqlColumns>
+					<sqlColumn name="id" pk="true">
+						<csvColumn index="0" />
+					</sqlColumn> 
+					<sqlColumn name="part_code">
+						<csvColumn index="4" conv="IntString" />
+					</sqlColumn>
+					<sqlColumn name="uom">
+						<csvColumn index="7" />
+					</sqlColumn>
+					<sqlColumn name="part_name">
+						<csvColumn index="2" />
+					</sqlColumn>
+				</sqlColumns>
+				<post />
+			</plan>
+        </csv>
+		<csv name="part_uom" firstRow="1" columnCount="10">
+			<plan name="part_spec">
+				<sql>INSERT INTO po.part_uom(part_spec_id,uom) VALUES (?,?)</sql>
+				<sqlColumns>
+					<sqlColumn name="part_spec" pk="true">
+						<csvColumn index="0" />
+					</sqlColumn> 
+					<sqlColumn name="uom">
+						<csvColumn index="7" />
+					</sqlColumn>
+				</sqlColumns>
+				<post />
+			</plan>
+        </csv>
+		<csv name="part" firstRow="1" columnCount="10">
+			<rowKey name="id" conv="UUID">
+				<argument name="prefix">PART:</argument>
+			</rowKey>
+			<plan name="part">
+				<sql>INSERT INTO po.part(id,part_spec_id,part_code,site_id) VALUES (?,?,?,'1000')</sql>
+				<sqlColumns>
+					<sqlColumn name="id" conv="RowKey">
+						<argument name="key">id</argument>
+					</sqlColumn> 
+					<sqlColumn name="part_spec_id">
+						<csvColumn index="0" />
+					</sqlColumn> 
+					<sqlColumn name="part_code">
+						<csvColumn index="4" conv="IntString" />
+					</sqlColumn>
+				</sqlColumns>
+				<post />
+			</plan>
+        </csv>
+	</csvSpace>
+</workspace>
