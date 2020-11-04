@@ -49,7 +49,7 @@ public class CsvColumn {
         catch (Exception ex) {
             ctx.setFailed(true);
             ctx.setMessage(ex.getMessage());
-            this.csv.getListener().cellFailed(this, ctx.getRowIndex(), this.columnType.getIndex());
+            this.csv.getListener().cellFailed(csv.getName(), this, ctx.getRowIndex(), this.columnType.getIndex());
             return null;
         }
     }

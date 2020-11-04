@@ -23,11 +23,11 @@ public class D2DException extends Exception {
     /**
      * Constructor.
      *
-     * @param csv
-     * @param plan
-     * @param column
-     * @param rowIndex
-     * @param ex
+     * @param csv The csv name.
+     * @param plan The plan name.
+     * @param column The column name.
+     * @param rowIndex The row index.
+     * @param ex The exception.
      */
     public D2DException(String csv, String plan, String column, int rowIndex, Exception ex) {
         super(ex);
@@ -40,11 +40,11 @@ public class D2DException extends Exception {
     /**
      * Constructor.
      *
-     * @param csv
-     * @param plan
-     * @param column
-     * @param rowIndex
-     * @param message
+     * @param csv The csv name.
+     * @param plan The plan name.
+     * @param column The column name.
+     * @param rowIndex The row index.
+     * @param message The exception message.
      */
     public D2DException(String csv, String plan, String column, int rowIndex, String message) {
         super(message);

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	    targetNamespace="http://d2d.uia/sheet/xml" 
+	    xmlns:d2d="http://d2d.uia/sheet/xml" 
+	    elementFormDefault="qualified">
+
+    <element name="workspace" type="d2d:WorkspaceType" nillable="true" />
+
+    <complexType name="WorkspaceType" mixed="false">
+    	<sequence>
+    		<element name="sheetSpace" type="d2d:SheetSpaceType" />
+            <element name="formatterSpace" type="d2d:FormatterSpaceType" />
+    	</sequence>
+    </complexType>
+
+	<!-- SheetSpace -->
+    <complexType name="SheetSpaceType">
+    	<sequence>
+    		<element name="sheet" type="d2d:SheetType" maxOccurs="unbounded" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+    <complexType name="SheetType">
+    	<sequence>
+            <choice maxOccurs="unbounded">
+        		<element name="property" type="d2d:PropertyType" maxOccurs="unbounded" minOccurs="0" ></element>
+        		<element name="object" type="d2d:ObjectType" maxOccurs="unbounded" minOccurs="0"></element>
+                <element name="list" type="d2d:ListType" maxOccurs="unbounded" minOccurs="0"></element>
+                <element name="custom" type="d2d:CustomType" maxOccurs="unbounded" minOccurs="0"></element>
+            </choice>
+    	</sequence>
+        <attribute name="name" type="string" use="required"></attribute>
+    </complexType>
+    <complexType name="CellType" abstract="true">
+        <attribute name="name" type="string" use="required"></attribute>
+    </complexType>
+    <complexType name="PropertyType">
+        <complexContent>
+            <extension base="d2d:CellType">
+                <attribute name="row" type="int" default="0"></attribute>
+                <attribute name="col" type="int" default="0"></attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="ObjectType">
+        <complexContent>
+            <extension base="d2d:CellType">
+            	<sequence>
+                    <choice maxOccurs="unbounded">
+                		<element name="property" type="d2d:PropertyType" maxOccurs="unbounded" minOccurs="0" ></element>
+                		<element name="object" type="d2d:ObjectType" maxOccurs="unbounded" minOccurs="0"></element>
+                        <element name="list" type="d2d:ListType" maxOccurs="unbounded" minOccurs="0"></element>
+                        <element name="custom" type="d2d:CustomType" maxOccurs="unbounded" minOccurs="0"></element>
+                    </choice>
+            	</sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="ListType">
+        <complexContent>
+            <extension base="d2d:CellType">
+            	<sequence>
+                    <choice maxOccurs="unbounded">
+                		<element name="property" type="d2d:PropertyType" maxOccurs="unbounded" minOccurs="0" ></element>
+                		<element name="object" type="d2d:ObjectType" maxOccurs="unbounded" minOccurs="0"></element>
+                        <element name="list" type="d2d:ListType" maxOccurs="unbounded" minOccurs="0"></element>
+                        <element name="custom" type="d2d:CustomType" maxOccurs="unbounded" minOccurs="0"></element>
+                    </choice>
+            	</sequence>
+                <attribute name="mode" type="string" default="rows"></attribute>
+                <attribute name="row" type="int" default="0"></attribute>
+                <attribute name="col" type="int" default="0"></attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="CustomType">
+        <complexContent>
+            <extension base="d2d:CellType">
+                <sequence>
+                    <element name="propertyRef" type="string" maxOccurs="unbounded" minOccurs="0" />
+                </sequence>
+                <attribute name="row" type="int" default="0"></attribute>
+                <attribute name="col" type="int" default="0"></attribute>
+                <attribute name="formatter" type="string" default="simple"></attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="FormatterSpaceType">
+        <sequence>
+            <element name="formatter" type="d2d:FormatterType" maxOccurs="unbounded" minOccurs="0"></element>
+        </sequence>
+    </complexType>
+    <complexType name="FormatterType">
+        <sequence>
+            <element name="name" type="string"></element>
+            <element name="driver" type="string"></element>
+        </sequence>
+    </complexType>
+
+</schema>

@@ -22,8 +22,8 @@ public class CsvListenerImpl implements CsvListener {
     }
 
     @Override
-    public void cellFailed(CsvColumn column, int rowIndex, int columnIndex) {
-        this.results.add(new CsvWriteLog(rowIndex, columnIndex, 2, "Ignore"));
+    public void cellFailed(String csvName, CsvColumn column, int rowIndex, int columnIndex) {
+        this.results.add(new CsvWriteLog(csvName, rowIndex, columnIndex, 2, "Ignore"));
         System.out.println(String.format("cell(%3s,%2s) failed, %s",
                 rowIndex,
                 columnIndex,
@@ -32,7 +32,7 @@ public class CsvListenerImpl implements CsvListener {
 
     @Override
     public void rowDone(String csvName, String plan, int rowIndex) {
-        this.results.add(new CsvWriteLog(rowIndex, 0, 0, "OK"));
+        this.results.add(new CsvWriteLog(csvName, rowIndex, 0, 0, "OK"));
         System.out.println(String.format("row(%3s): csv:%s, plan:%s, done",
                 rowIndex,
                 csvName,
@@ -41,7 +41,7 @@ public class CsvListenerImpl implements CsvListener {
 
     @Override
     public void rowIgnore(String csvName, String plan, int rowIndex, String message) {
-        this.results.add(new CsvWriteLog(rowIndex, 0, 1, "ignore: " + message));
+        this.results.add(new CsvWriteLog(csvName, rowIndex, 0, 1, "ignore: " + message));
         System.out.println(String.format("row(%3s): csv:%s, plan:%s, ignore",
                 rowIndex,
                 csvName,
@@ -50,10 +50,11 @@ public class CsvListenerImpl implements CsvListener {
 
     @Override
     public void rowFailed(String csvName, String plan, int rowIndex, String message) {
-        this.results.add(new CsvWriteLog(rowIndex, 0, 2, "failed: " + message));
-        System.out.println(String.format("row(%3s): csv:%s, plan:%s, failed",
+        this.results.add(new CsvWriteLog(csvName, rowIndex, 0, 2, "failed: " + message));
+        System.out.println(String.format("row(%3s): csv:%s, plan:%s, failed, %s",
                 rowIndex,
                 csvName,
-                plan));
+                plan,
+                message));
     }
 }

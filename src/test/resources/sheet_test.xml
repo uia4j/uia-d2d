@@ -1,0 +1,29 @@
+<workspace xmlns="http://d2d.uia/sheet/xml">
+	<sheetSpace>
+		<sheet name="Dept">
+            <property name="deptName" row="1" col="1" />
+            <object name="deptManager">
+                <property name="name" row="2" col="2" />
+                <property name="empNo" row="2" col="3" />
+            </object>
+            <list name="empList" row="4" mode="rows">
+                <property name="name" col="1" />
+                <property name="empNo" col="2" />
+                <custom name="sex" col="3" formatter="sex" />
+            </list>
+        </sheet>
+        <sheet name="EmpList">
+            <list name="empList" row="4" mode="rows">
+                <property name="name" col="1" />
+                <property name="empNo" col="2" />
+                <property name="sex" col="3" />
+            </list> 
+        </sheet>
+	</sheetSpace>
+    <formatterSpace>
+        <formatter>
+            <name>sex</name>
+            <driver>uia.d2d.sheet.fmt.SexFormatter</driver>
+        </formatter>
+    </formatterSpace>
+</workspace>

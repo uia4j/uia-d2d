@@ -26,6 +26,7 @@ public class SQLxConv implements SqlColumnConv {
     @Override
     public Object toObject(SqlColumn column, Object[] values, CsvExecuteContext ctx) {
         String sql = column.getArgument("sql");
+        String nullable = column.getArgument("nullable", "false");
         Object result = null;
         try (PreparedStatement ps = ctx.getConnection().prepareStatement(sql)) {
             for (int i = 0; i < values.length; i++) {
@@ -35,8 +36,11 @@ public class SQLxConv implements SqlColumnConv {
                 if (rs.next()) {
                     result = rs.getString(1);
                 }
-                else {
+                else if("true".equalsIgnoreCase(nullable)) {
                     result = null;
+                }
+                else {
+                	throw new Exception("NOT FOUND");
                 }
             }
         }

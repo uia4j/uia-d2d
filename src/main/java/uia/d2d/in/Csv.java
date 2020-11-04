@@ -136,9 +136,9 @@ public class Csv {
                 }
                 rowIndex++;
 
-                if (ctx.isFailed()) {
-                    System.out.println(ctx.getMessage());
-                }
+                //if (ctx.isFailed()) {
+                //    System.out.println(ctx.getMessage());
+                //}
                 ctx = ctx.next();
             }
             conn.commit();
